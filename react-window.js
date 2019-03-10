@@ -8,38 +8,14 @@ function areEqual(prevProps, nextProps) {
 }
 
 const IS_SCROLLING_DEBOUNCE_INTERVAL = 150;
-const defaultItemKey = (
-    {
-        columnIndex,
-        data,
-        rowIndex
-    }
-) => `${rowIndex}:${columnIndex}`;
+const defaultItemKey = ({ columnIndex, data, rowIndex }) => `${rowIndex}:${columnIndex}`;
 let devWarningsTagName = null;
 {
     if (typeof window.WeakSet !== 'undefined') {
         devWarningsTagName = new WeakSet();
     }
 }
-function createGridComponent(
-    {
-        getColumnOffset,
-        getColumnStartIndexForOffset,
-        getColumnStopIndexForStartIndex,
-        getColumnWidth,
-        getEstimatedTotalHeight,
-        getEstimatedTotalWidth,
-        getOffsetForColumnAndAlignment,
-        getOffsetForRowAndAlignment,
-        getRowHeight,
-        getRowOffset,
-        getRowStartIndexForOffset,
-        getRowStopIndexForStartIndex,
-        initInstanceProps,
-        shouldResetStyleCacheOnItemSizeChange,
-        validateProps
-    }
-) {
+function createGridComponent({ getColumnOffset, getColumnStartIndexForOffset, getColumnStopIndexForStartIndex, getColumnWidth, getEstimatedTotalHeight, getEstimatedTotalWidth, getOffsetForColumnAndAlignment, getOffsetForRowAndAlignment, getRowHeight, getRowOffset, getRowStartIndexForOffset, getRowStopIndexForStartIndex, initInstanceProps, shouldResetStyleCacheOnItemSizeChange, validateProps }) {
     var _a;
     return _a = class Grid extends PureComponent {
             constructor(props) {
@@ -59,16 +35,7 @@ function createGridComponent(
                     scrollUpdateWasRequested: false,
                     verticalScrollDirection: 'forward',
                 };
-                this._callOnItemsRendered = memoizeOne((
-                    overscanColumnStartIndex,
-                    overscanColumnStopIndex,
-                    overscanRowStartIndex,
-                    overscanRowStopIndex,
-                    visibleColumnStartIndex,
-                    visibleColumnStopIndex,
-                    visibleRowStartIndex,
-                    visibleRowStopIndex
-                ) => this.props.onItemsRendered({
+                this._callOnItemsRendered = memoizeOne((overscanColumnStartIndex, overscanColumnStopIndex, overscanRowStartIndex, overscanRowStopIndex, visibleColumnStartIndex, visibleColumnStopIndex, visibleRowStartIndex, visibleRowStopIndex) => this.props.onItemsRendered({
                     overscanColumnStartIndex,
                     overscanColumnStopIndex,
                     overscanRowStartIndex,
@@ -78,13 +45,7 @@ function createGridComponent(
                     visibleRowStartIndex,
                     visibleRowStopIndex,
                 }));
-                this._callOnScroll = memoizeOne((
-                    scrollLeft,
-                    scrollTop,
-                    horizontalScrollDirection,
-                    verticalScrollDirection,
-                    scrollUpdateWasRequested
-                ) => this.props.onScroll({
+                this._callOnScroll = memoizeOne((scrollLeft, scrollTop, horizontalScrollDirection, verticalScrollDirection, scrollUpdateWasRequested) => this.props.onScroll({
                     horizontalScrollDirection,
                     scrollLeft,
                     scrollTop,
@@ -93,11 +54,7 @@ function createGridComponent(
                 }));
                 this._getItemStyle = (rowIndex, columnIndex) => {
                     const { columnWidth, direction, rowHeight } = this.props;
-                    const itemStyleCache = this._getItemStyleCache(
-                        shouldResetStyleCacheOnItemSizeChange && columnWidth,
-                        shouldResetStyleCacheOnItemSizeChange && direction,
-                        shouldResetStyleCacheOnItemSizeChange && rowHeight
-                    );
+                    const itemStyleCache = this._getItemStyleCache(shouldResetStyleCacheOnItemSizeChange && columnWidth, shouldResetStyleCacheOnItemSizeChange && direction, shouldResetStyleCacheOnItemSizeChange && rowHeight);
                     const key = `${rowIndex}:${columnIndex}`;
                     let style;
                     if (itemStyleCache.hasOwnProperty(key)) {
@@ -173,12 +130,7 @@ function createGridComponent(
                 validateProps(nextProps);
                 return null;
             }
-            scrollTo(
-                {
-                    scrollLeft,
-                    scrollTop
-                }
-            ) {
+            scrollTo({ scrollLeft, scrollTop }) {
                 this.setState(prevState => {
                     if (scrollLeft === undefined) {
                         scrollLeft = prevState.scrollLeft;
@@ -195,13 +147,7 @@ function createGridComponent(
                     };
                 }, this._resetIsScrollingDebounced);
             }
-            scrollToItem(
-                {
-                    align = 'auto',
-                    columnIndex,
-                    rowIndex
-                }
-            ) {
+            scrollToItem({ align = 'auto', columnIndex, rowIndex }) {
                 const { height, width } = this.props;
                 const { scrollLeft, scrollTop } = this.state;
                 const scrollbarSize = getScrollbarSize();
@@ -210,22 +156,8 @@ function createGridComponent(
                 const horizontalScrollbarSize = estimatedTotalWidth > width ? scrollbarSize : 0;
                 const verticalScrollbarSize = estimatedTotalHeight > height ? scrollbarSize : 0;
                 this.scrollTo({
-                    scrollLeft: getOffsetForColumnAndAlignment(
-                        this.props,
-                        columnIndex,
-                        align,
-                        scrollLeft,
-                        this._instanceProps,
-                        verticalScrollbarSize
-                    ),
-                    scrollTop: getOffsetForRowAndAlignment(
-                        this.props,
-                        rowIndex,
-                        align,
-                        scrollTop,
-                        this._instanceProps,
-                        horizontalScrollbarSize
-                    ),
+                    scrollLeft: getOffsetForColumnAndAlignment(this.props, columnIndex, align, scrollLeft, this._instanceProps, verticalScrollbarSize),
+                    scrollTop: getOffsetForRowAndAlignment(this.props, rowIndex, align, scrollTop, this._instanceProps, horizontalScrollbarSize),
                 });
             }
             componentDidMount() {
@@ -303,27 +235,12 @@ function createGridComponent(
                     if (columnCount > 0 && rowCount > 0) {
                         const [overscanColumnStartIndex, overscanColumnStopIndex, visibleColumnStartIndex, visibleColumnStopIndex,] = this._getHorizontalRangeToRender();
                         const [overscanRowStartIndex, overscanRowStopIndex, visibleRowStartIndex, visibleRowStopIndex,] = this._getVerticalRangeToRender();
-                        this._callOnItemsRendered(
-                            overscanColumnStartIndex,
-                            overscanColumnStopIndex,
-                            overscanRowStartIndex,
-                            overscanRowStopIndex,
-                            visibleColumnStartIndex,
-                            visibleColumnStopIndex,
-                            visibleRowStartIndex,
-                            visibleRowStopIndex
-                        );
+                        this._callOnItemsRendered(overscanColumnStartIndex, overscanColumnStopIndex, overscanRowStartIndex, overscanRowStopIndex, visibleColumnStartIndex, visibleColumnStopIndex, visibleRowStartIndex, visibleRowStopIndex);
                     }
                 }
                 if (typeof onScroll === 'function') {
                     const { horizontalScrollDirection, scrollLeft, scrollTop, scrollUpdateWasRequested, verticalScrollDirection, } = this.state;
-                    this._callOnScroll(
-                        scrollLeft,
-                        scrollTop,
-                        horizontalScrollDirection,
-                        verticalScrollDirection,
-                        scrollUpdateWasRequested
-                    );
+                    this._callOnScroll(scrollLeft, scrollTop, horizontalScrollDirection, verticalScrollDirection, scrollUpdateWasRequested);
                 }
             }
             _getHorizontalRangeToRender() {
@@ -379,19 +296,7 @@ function createGridComponent(
 
 
 
-function createListComponent(
-    {
-        getItemOffset,
-        getEstimatedTotalSize,
-        getItemSize,
-        getOffsetForIndexAndAlignment,
-        getStartIndexForOffset,
-        getStopIndexForStartIndex,
-        initInstanceProps,
-        shouldResetStyleCacheOnItemSizeChange,
-        validateProps
-    }
-) {
+function createListComponent({ getItemOffset, getEstimatedTotalSize, getItemSize, getOffsetForIndexAndAlignment, getStartIndexForOffset, getStopIndexForStartIndex, initInstanceProps, shouldResetStyleCacheOnItemSizeChange, validateProps }) {
     var _a;
     return _a = class List extends PureComponent {
             constructor(props) {
@@ -407,28 +312,20 @@ function createListComponent(
                         : 0,
                     scrollUpdateWasRequested: false,
                 };
-                this._callOnItemsRendered = memoizeOne(
-                    (overscanStartIndex, overscanStopIndex, visibleStartIndex, visibleStopIndex) => this.props.onItemsRendered({
-                        overscanStartIndex,
-                        overscanStopIndex,
-                        visibleStartIndex,
-                        visibleStopIndex,
-                    })
-                );
-                this._callOnScroll = memoizeOne(
-                    (scrollDirection, scrollOffset, scrollUpdateWasRequested) => this.props.onScroll({
-                        scrollDirection,
-                        scrollOffset,
-                        scrollUpdateWasRequested,
-                    })
-                );
+                this._callOnItemsRendered = memoizeOne((overscanStartIndex, overscanStopIndex, visibleStartIndex, visibleStopIndex) => this.props.onItemsRendered({
+                    overscanStartIndex,
+                    overscanStopIndex,
+                    visibleStartIndex,
+                    visibleStopIndex,
+                }));
+                this._callOnScroll = memoizeOne((scrollDirection, scrollOffset, scrollUpdateWasRequested) => this.props.onScroll({
+                    scrollDirection,
+                    scrollOffset,
+                    scrollUpdateWasRequested,
+                }));
                 this._getItemStyle = index => {
                     const { direction, itemSize, layout } = this.props;
-                    const itemStyleCache = this._getItemStyleCache(
-                        shouldResetStyleCacheOnItemSizeChange && itemSize,
-                        shouldResetStyleCacheOnItemSizeChange && layout,
-                        shouldResetStyleCacheOnItemSizeChange && direction
-                    );
+                    const itemStyleCache = this._getItemStyleCache(shouldResetStyleCacheOnItemSizeChange && itemSize, shouldResetStyleCacheOnItemSizeChange && layout, shouldResetStyleCacheOnItemSizeChange && direction);
                     let style;
                     if (itemStyleCache.hasOwnProperty(index)) {
                         style = itemStyleCache[index];
@@ -526,9 +423,7 @@ function createListComponent(
             }
             scrollToItem(index, align = 'auto') {
                 const { scrollOffset } = this.state;
-                this.scrollTo(
-                    getOffsetForIndexAndAlignment(this.props, index, align, scrollOffset, this._instanceProps)
-                );
+                this.scrollTo(getOffsetForIndexAndAlignment(this.props, index, align, scrollOffset, this._instanceProps));
             }
             componentDidMount() {
                 const { direction, initialScrollOffset, layout } = this.props;
@@ -647,20 +542,7 @@ function createListComponent(
             useIsScrolling: false,
         }, _a;
 }
-const validateSharedProps = (
-    {
-        children,
-        direction,
-        height,
-        layout,
-        innerTagName,
-        outerTagName,
-        width
-    },
-    {
-        instance
-    }
-) => {
+const validateSharedProps = ({ children, direction, height, layout, innerTagName, outerTagName, width }, { instance }) => {
     {
         if (innerTagName != null || outerTagName != null) {
             if (devWarningsTagName && !devWarningsTagName.has(instance)) {
@@ -730,58 +612,14 @@ function getScrollbarSize(recalculate = false) {
 }
 
 const FixedSizeGrid = createGridComponent({
-    getColumnOffset: (
-        {
-            columnWidth
-        },
-        index
-    ) => index * (columnWidth),
-    getColumnWidth: (
-        {
-            columnWidth
-        },
-        index
-    ) => columnWidth,
-    getRowOffset: (
-        {
-            rowHeight
-        },
-        index
-    ) => index * (rowHeight),
-    getRowHeight: (
-        {
-            rowHeight
-        },
-        index
-    ) => rowHeight,
-    getEstimatedTotalHeight: (
-        {
-            rowCount,
-            rowHeight
-        }
-    ) => (rowHeight) * rowCount,
-    getEstimatedTotalWidth: (
-        {
-            columnCount,
-            columnWidth
-        }
-    ) => (columnWidth) * columnCount,
-    getOffsetForColumnAndAlignment: (
-        {
-            columnCount,
-            columnWidth,
-            width
-        },
-        columnIndex,
-        align,
-        scrollLeft,
-        instanceProps,
-        scrollbarSize
-    ) => {
-        const maxOffset = Math.max(
-            0,
-            Math.min(columnCount * (columnWidth) - width, columnIndex * (columnWidth))
-        );
+    getColumnOffset: ({ columnWidth }, index) => index * (columnWidth),
+    getColumnWidth: ({ columnWidth }, index) => columnWidth,
+    getRowOffset: ({ rowHeight }, index) => index * (rowHeight),
+    getRowHeight: ({ rowHeight }, index) => rowHeight,
+    getEstimatedTotalHeight: ({ rowCount, rowHeight }) => (rowHeight) * rowCount,
+    getEstimatedTotalWidth: ({ columnCount, columnWidth }) => (columnWidth) * columnCount,
+    getOffsetForColumnAndAlignment: ({ columnCount, columnWidth, width }, columnIndex, align, scrollLeft, instanceProps, scrollbarSize) => {
+        const maxOffset = Math.max(0, Math.min(columnCount * (columnWidth) - width, columnIndex * (columnWidth)));
         const minOffset = Math.max(0, columnIndex * (columnWidth) -
             width +
             scrollbarSize +
@@ -806,18 +644,7 @@ const FixedSizeGrid = createGridComponent({
                 }
         }
     },
-    getOffsetForRowAndAlignment: (
-        {
-            rowHeight,
-            height,
-            rowCount
-        },
-        rowIndex,
-        align,
-        scrollTop,
-        instanceProps,
-        scrollbarSize
-    ) => {
+    getOffsetForRowAndAlignment: ({ rowHeight, height, rowCount }, rowIndex, align, scrollTop, instanceProps, scrollbarSize) => {
         const maxOffset = Math.max(0, Math.min(rowCount * (rowHeight) - height, rowIndex * (rowHeight)));
         const minOffset = Math.max(0, rowIndex * (rowHeight) -
             height +
@@ -843,42 +670,14 @@ const FixedSizeGrid = createGridComponent({
                 }
         }
     },
-    getColumnStartIndexForOffset: (
-        {
-            columnWidth,
-            columnCount
-        },
-        scrollLeft
-    ) => Math.max(0, Math.min(columnCount - 1, Math.floor(scrollLeft / (columnWidth)))),
-    getColumnStopIndexForStartIndex: (
-        {
-            columnWidth,
-            columnCount,
-            width
-        },
-        startIndex,
-        scrollLeft
-    ) => {
+    getColumnStartIndexForOffset: ({ columnWidth, columnCount }, scrollLeft) => Math.max(0, Math.min(columnCount - 1, Math.floor(scrollLeft / (columnWidth)))),
+    getColumnStopIndexForStartIndex: ({ columnWidth, columnCount, width }, startIndex, scrollLeft) => {
         const left = startIndex * (columnWidth);
         return Math.max(0, Math.min(columnCount - 1, startIndex +
             Math.floor((width + (scrollLeft - left)) / (columnWidth))));
     },
-    getRowStartIndexForOffset: (
-        {
-            rowHeight,
-            rowCount
-        },
-        scrollTop
-    ) => Math.max(0, Math.min(rowCount - 1, Math.floor(scrollTop / (rowHeight)))),
-    getRowStopIndexForStartIndex: (
-        {
-            rowHeight,
-            rowCount,
-            height
-        },
-        startIndex,
-        scrollTop
-    ) => {
+    getRowStartIndexForOffset: ({ rowHeight, rowCount }, scrollTop) => Math.max(0, Math.min(rowCount - 1, Math.floor(scrollTop / (rowHeight)))),
+    getRowStopIndexForStartIndex: ({ rowHeight, rowCount, height }, startIndex, scrollTop) => {
         const left = startIndex * (rowHeight);
         return Math.max(0, Math.min(rowCount - 1, startIndex +
             Math.floor((height + (scrollTop - left)) / (rowHeight))));
@@ -886,12 +685,7 @@ const FixedSizeGrid = createGridComponent({
     initInstanceProps(props) {
     },
     shouldResetStyleCacheOnItemSizeChange: true,
-    validateProps: (
-        {
-            columnWidth,
-            rowHeight
-        }
-    ) => {
+    validateProps: ({ columnWidth, rowHeight }) => {
         {
             if (typeof columnWidth !== 'number') {
                 throw Error('An invalid "columnWidth" prop has been specified. ' +
@@ -909,39 +703,10 @@ const FixedSizeGrid = createGridComponent({
 
 
 const FixedSizeList = createListComponent({
-    getItemOffset: (
-        {
-            itemSize,
-            size
-        },
-        index
-    ) => index * (itemSize),
-    getItemSize: (
-        {
-            itemSize,
-            size
-        },
-        index
-    ) => itemSize,
-    getEstimatedTotalSize: (
-        {
-            itemCount,
-            itemSize
-        }
-    ) => (itemSize) * itemCount,
-    getOffsetForIndexAndAlignment: (
-        {
-            direction,
-            height,
-            itemCount,
-            itemSize,
-            layout,
-            width
-        },
-        index,
-        align,
-        scrollOffset
-    ) => {
+    getItemOffset: ({ itemSize, size }, index) => index * (itemSize),
+    getItemSize: ({ itemSize, size }, index) => itemSize,
+    getEstimatedTotalSize: ({ itemCount, itemSize }) => (itemSize) * itemCount,
+    getOffsetForIndexAndAlignment: ({ direction, height, itemCount, itemSize, layout, width }, index, align, scrollOffset) => {
         const isHorizontal = direction === 'horizontal' || layout === 'horizontal';
         const size = (isHorizontal ? width : height);
         const maxOffset = Math.max(0, Math.min(itemCount * (itemSize) - size, index * (itemSize)));
@@ -966,25 +731,8 @@ const FixedSizeList = createListComponent({
                 }
         }
     },
-    getStartIndexForOffset: (
-        {
-            itemCount,
-            itemSize
-        },
-        offset
-    ) => Math.max(0, Math.min(itemCount - 1, Math.floor(offset / (itemSize)))),
-    getStopIndexForStartIndex: (
-        {
-            direction,
-            height,
-            itemCount,
-            itemSize,
-            layout,
-            width
-        },
-        startIndex,
-        scrollOffset
-    ) => {
+    getStartIndexForOffset: ({ itemCount, itemSize }, offset) => Math.max(0, Math.min(itemCount - 1, Math.floor(offset / (itemSize)))),
+    getStopIndexForStartIndex: ({ direction, height, itemCount, itemSize, layout, width }, startIndex, scrollOffset) => {
         const isHorizontal = direction === 'horizontal' || layout === 'horizontal';
         const offset = startIndex * (itemSize);
         const size = (isHorizontal ? width : height);
@@ -994,11 +742,7 @@ const FixedSizeList = createListComponent({
     initInstanceProps(props) {
     },
     shouldResetStyleCacheOnItemSizeChange: true,
-    validateProps: (
-        {
-            itemSize
-        }
-    ) => {
+    validateProps: ({ itemSize }) => {
         {
             if (typeof itemSize !== 'number') {
                 throw Error('An invalid "itemSize" prop has been specified. ' +
@@ -1052,16 +796,7 @@ function requestTimeout(callback, delay) {
 }
 
 const DEFAULT_ESTIMATED_ITEM_SIZE = 50;
-const getEstimatedTotalHeight = (
-    {
-        rowCount
-    },
-    {
-        rowMetadataMap,
-        estimatedRowHeight,
-        lastMeasuredRowIndex
-    }
-) => {
+const getEstimatedTotalHeight = ({ rowCount }, { rowMetadataMap, estimatedRowHeight, lastMeasuredRowIndex }) => {
     let totalSizeOfMeasuredRows = 0;
     if (lastMeasuredRowIndex >= rowCount) {
         lastMeasuredRowIndex = rowCount - 1;
@@ -1074,16 +809,7 @@ const getEstimatedTotalHeight = (
     const totalSizeOfUnmeasuredItems = numUnmeasuredItems * estimatedRowHeight;
     return totalSizeOfMeasuredRows + totalSizeOfUnmeasuredItems;
 };
-const getEstimatedTotalWidth = (
-    {
-        columnCount
-    },
-    {
-        columnMetadataMap,
-        estimatedColumnWidth,
-        lastMeasuredColumnIndex
-    }
-) => {
+const getEstimatedTotalWidth = ({ columnCount }, { columnMetadataMap, estimatedColumnWidth, lastMeasuredColumnIndex }) => {
     let totalSizeOfMeasuredRows = 0;
     if (lastMeasuredColumnIndex >= columnCount) {
         lastMeasuredColumnIndex = columnCount - 1;
@@ -1178,14 +904,7 @@ const findNearestItemExponentialSearch = (itemType, props, instanceProps, index,
         index += interval;
         interval *= 2;
     }
-    return findNearestItemBinarySearch(
-        itemType,
-        props,
-        instanceProps,
-        Math.min(index, itemCount - 1),
-        Math.floor(index / 2),
-        offset
-    );
+    return findNearestItemBinarySearch(itemType, props, instanceProps, Math.min(index, itemCount - 1), Math.floor(index / 2), offset);
 };
 const getOffsetForIndexAndAlignment = (itemType, props, index, align, scrollOffset, instanceProps, scrollbarSize) => {
     const size = itemType === 'column' ? props.width : props.height;
@@ -1267,13 +986,7 @@ const VariableSizeGrid = createGridComponent({
         instance.resetAfterRowIndex = (rowIndex, shouldForceUpdate = true) => {
             instance.resetAfterIndices({ rowIndex, shouldForceUpdate });
         };
-        instance.resetAfterIndices = (
-            {
-                columnIndex,
-                rowIndex,
-                shouldForceUpdate = true
-            }
-        ) => {
+        instance.resetAfterIndices = ({ columnIndex, rowIndex, shouldForceUpdate = true }) => {
             if (typeof columnIndex === 'number') {
                 instanceProps.lastMeasuredColumnIndex = Math.min(instanceProps.lastMeasuredColumnIndex, columnIndex - 1);
             }
@@ -1288,12 +1001,7 @@ const VariableSizeGrid = createGridComponent({
         return instanceProps;
     },
     shouldResetStyleCacheOnItemSizeChange: false,
-    validateProps: (
-        {
-            columnWidth,
-            rowHeight
-        }
-    ) => {
+    validateProps: ({ columnWidth, rowHeight }) => {
         {
             if (typeof columnWidth !== 'function') {
                 throw Error('An invalid "columnWidth" prop has been specified. ' +
@@ -1313,16 +1021,7 @@ const VariableSizeGrid = createGridComponent({
 
 
 
-const getEstimatedTotalSize = (
-    {
-        itemCount
-    },
-    {
-        itemMetadataMap,
-        estimatedItemSize,
-        lastMeasuredIndex
-    }
-) => {
+const getEstimatedTotalSize = ({ itemCount }, { itemMetadataMap, estimatedItemSize, lastMeasuredIndex }) => {
     let totalSizeOfMeasuredItems = 0;
     if (lastMeasuredIndex >= itemCount) {
         lastMeasuredIndex = itemCount - 1;
@@ -1400,11 +1099,7 @@ const VariableSizeList = createListComponent({
         return instanceProps;
     },
     shouldResetStyleCacheOnItemSizeChange: false,
-    validateProps: (
-        {
-            itemSize
-        }
-    ) => {
+    validateProps: ({ itemSize }) => {
         {
             if (typeof itemSize !== 'function') {
                 throw Error('An invalid "itemSize" prop has been specified. ' +
@@ -1416,3 +1111,4 @@ const VariableSizeList = createListComponent({
 });
 
 export { areEqual, createGridComponent, createListComponent, getScrollbarSize, FixedSizeGrid, FixedSizeList, shallowDiffers, shouldComponentUpdate, cancelTimeout, requestTimeout, VariableSizeGrid, VariableSizeList };
+
